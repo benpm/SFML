@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -75,6 +75,11 @@ public:
     T x; //!< X coordinate of the vector
     T y; //!< Y coordinate of the vector
 };
+
+// Define the most common types
+using Vector2i = Vector2<int>;
+using Vector2u = Vector2<unsigned int>;
+using Vector2f = Vector2<float>;
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -247,12 +252,152 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
-#include <SFML/System/Vector2.inl>
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the length of the 2D vector.
+///
+/// If you are not interested in the actual length, but only in comparisons, consider using lengthSquared().
+///
+////////////////////////////////////////////////////////////
+float length(const Vector2f& vector);
 
-// Define the most common types
-using Vector2i = Vector2<int>;
-using Vector2u = Vector2<unsigned int>;
-using Vector2f = Vector2<float>;
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the square of \a vector's length.
+/// 
+/// Suitable for comparisons, more efficient than length().
+///
+////////////////////////////////////////////////////////////
+float lengthSquared(const Vector2f& vector);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Adapts \a vector so that its length is |\a newLength| after this operation.
+/// 
+/// If \a newLength is less than zero, the vector's direction changes.
+/// 
+/// \pre \a vector is no zero vector.
+///
+////////////////////////////////////////////////////////////
+void setLength(Vector2f& vector, float newLength);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns a vector with same direction as the argument, but with length 1.
+/// 
+/// \pre \a vector is no zero vector.
+///
+////////////////////////////////////////////////////////////
+Vector2f normalized(const Vector2f& vector);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Computes the signed angle from \a lhs to \a rhs.
+/// 
+/// \return Angle in degrees in the interval [-180,180]. The angle determines how much you have to turn \a lhs
+///  until it points to the same direction as \a rhs.
+/// \pre Neither \a lhs nor \a rhs is a zero vector.
+///
+////////////////////////////////////////////////////////////
+float signedAngle(const Vector2f& lhs, const Vector2f& rhs);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the polar angle.
+/// 
+/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+/// 
+/// \return Angle in degrees in the interval [-180,180].
+/// \pre \a vector is no zero vector.
+///
+////////////////////////////////////////////////////////////
+float polarAngle(const Vector2f& vector);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Sets the polar angle of the specified vector.
+/// 
+/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+///
+////////////////////////////////////////////////////////////
+void setPolarAngle(Vector2f& vector, float newAngle);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Rotates the vector by the given angle (in degrees).
+/// 
+/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+///
+////////////////////////////////////////////////////////////
+void rotate(Vector2f& vector, float angle);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns a copy of the vector, rotated by \a angle degrees.
+/// 
+/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+///
+////////////////////////////////////////////////////////////
+Vector2f rotatedVector(const Vector2f& vector, float angle);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns a perpendicular vector.
+/// 
+/// Returns \a vector turned by 90 degrees counter clockwise; (x,y) becomes (-y,x).
+/// For example, the vector (1,0) is transformed to (0,1).
+///
+////////////////////////////////////////////////////////////
+Vector2f perpendicularVector(const Vector2f& vector);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Computes the dot product of two 2D vectors.
+///
+////////////////////////////////////////////////////////////
+float dot(const Vector2f& lhs, const Vector2f& rhs);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Computes the cross product of two 2D vectors (Z component only).
+/// 
+/// Treats the operands as 3D vectors, computes their cross product and returns the result's Z component
+///  (X and Y components are always zero).
+///
+////////////////////////////////////////////////////////////
+float cross(const Vector2f& lhs, const Vector2f& rhs);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the component-wise product of \a lhs and \a rhs.
+/// 
+/// Computes <i>(lhs.x*rhs.x, lhs.y*rhs.y)</i>. Component-wise multiplications are mainly used for scales.
+///
+////////////////////////////////////////////////////////////
+Vector2f cwiseProduct(const Vector2f& lhs, const Vector2f& rhs);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the component-wise quotient of \a lhs and \a rhs.
+/// 
+/// Computes <i>(lhs.x/rhs.x, lhs.y/rhs.y)</i>. Component-wise divisions are mainly used for scales.
+/// 
+/// \pre Neither component of \a rhs is zero.
+///
+////////////////////////////////////////////////////////////
+Vector2f cwiseQuotient(const Vector2f& lhs, const Vector2f& rhs);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Returns the projection of \a vector onto \a axis.
+/// 
+/// \param vector Vector to project onto another.
+/// \param axis Vector being projected onto. Need not be a unit vector, but may not have length zero.
+///
+////////////////////////////////////////////////////////////
+Vector2f projectedVector(const Vector2f& vector, const Vector2f& axis);
+
+#include <SFML/System/Vector2.inl>
 
 } // namespace sf
 
