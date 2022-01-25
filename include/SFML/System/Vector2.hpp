@@ -25,6 +25,8 @@
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
 
+#include <SFML/System/Angle.hpp>
+
 
 namespace sf
 {
@@ -299,7 +301,7 @@ Vector2f normalized(const Vector2f& vector);
 /// \pre Neither \a lhs nor \a rhs is a zero vector.
 ///
 ////////////////////////////////////////////////////////////
-float signedAngle(const Vector2f& lhs, const Vector2f& rhs);
+Angle signedAngle(const Vector2f& lhs, const Vector2f& rhs);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -311,7 +313,7 @@ float signedAngle(const Vector2f& lhs, const Vector2f& rhs);
 /// \pre \a vector is no zero vector.
 ///
 ////////////////////////////////////////////////////////////
-float polarAngle(const Vector2f& vector);
+Angle polarAngle(const Vector2f& vector);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -320,7 +322,7 @@ float polarAngle(const Vector2f& vector);
 /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
 ///
 ////////////////////////////////////////////////////////////
-void setPolarAngle(Vector2f& vector, float newAngle);
+void setPolarAngle(Vector2f& vector, Angle newAngle);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -329,7 +331,7 @@ void setPolarAngle(Vector2f& vector, float newAngle);
 /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
 ///
 ////////////////////////////////////////////////////////////
-void rotate(Vector2f& vector, float angle);
+void rotate(Vector2f& vector, Angle angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -338,7 +340,7 @@ void rotate(Vector2f& vector, float angle);
 /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
 ///
 ////////////////////////////////////////////////////////////
-Vector2f rotatedVector(const Vector2f& vector, float angle);
+Vector2f rotatedVector(const Vector2f& vector, Angle angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2

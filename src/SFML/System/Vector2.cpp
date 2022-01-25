@@ -59,37 +59,37 @@ Vector2f normalized(const Vector2f& vector)
 }
 
 ////////////////////////////////////////////////////////////
-float signedAngle(const Vector2f& lhs, const Vector2f& rhs)
+Angle signedAngle(const Vector2f& lhs, const Vector2f& rhs)
 {
 	assert(lhs != Vector2f() && rhs != Vector2f());
-	return std::atan2(cross(lhs, rhs), dot(lhs, rhs));
+	return sf::radians(std::atan2(cross(lhs, rhs), dot(lhs, rhs)));
 }
 
 ////////////////////////////////////////////////////////////
-float polarAngle(const Vector2f& vector)
+Angle polarAngle(const Vector2f& vector)
 {
 	assert(vector != Vector2f());
-	return std::atan2(vector.y, vector.x);
+	return sf::radians(std::atan2(vector.y, vector.x));
 }
 
 ////////////////////////////////////////////////////////////
-void setPolarAngle(Vector2f& vector, float newAngle)
+void setPolarAngle(Vector2f& vector, Angle newAngle)
 {
 	// No assert here, because turning a zero vector is well-defined (yields always zero vector)
 
 	float vecLength = length(vector);
 
-	vector.x = vecLength * std::cos(newAngle);
-	vector.y = vecLength * std::sin(newAngle);
+	vector.x = vecLength * std::cos(newAngle.asRadians());
+	vector.y = vecLength * std::sin(newAngle.asRadians());
 }
 
 ////////////////////////////////////////////////////////////
-void rotate(Vector2f& vector, float angle)
+void rotate(Vector2f& vector, Angle angle)
 {
 	// No assert here, because turning a zero vector is well-defined (yields always zero vector)
 
-	float cos = std::cos(angle);
-	float sin = std::sin(angle);
+	float cos = std::cos(angle.asRadians());
+	float sin = std::sin(angle.asRadians());
 
 	// Don'float manipulate x and y separately, otherwise they're overwritten too early
 	vector = Vector2f(
@@ -98,7 +98,7 @@ void rotate(Vector2f& vector, float angle)
 }
 
 ////////////////////////////////////////////////////////////
-Vector2f rotatedVector(const Vector2f& vector, float angle)
+Vector2f rotatedVector(const Vector2f& vector, Angle angle)
 {
 	// No assert here, because turning a zero vector is well-defined (yields always zero vector)
 
