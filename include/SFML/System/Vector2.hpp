@@ -91,16 +91,6 @@ public:
     T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Scales \c *this to have length <tt>|newLength|</tt> <i>(floating point only)</i>.
-    /// 
-    /// If \c newLength is less than zero, the vector's direction changes.
-    /// 
-    /// \pre \c vector is no zero vector.
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2 withLength(T newLength) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i>(floating point only)</i>.
     /// 
     /// \pre \c vector is no zero vector.
@@ -131,14 +121,6 @@ public:
     Angle polarAngle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns a vector with same length, but given polar angle <i>(floating point only)</i>.
-    /// 
-    /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2 withPolarAngle(Angle newAngle) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Rotate by given angle <i>(floating point only)</i>.
     /// 
     /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
@@ -159,7 +141,7 @@ public:
     /// \brief Projection of \c vector onto \c axis <i>(floating point only)</i>.
     /// 
     /// \param vector Vector to project.
-    /// \param axis Vector being projected onto. Need not be a unit vector, but must not have length zero.
+    /// \param axis Vector being projected onto. Need not be normalized, but must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
     Vector2 projectedOnto(const Vector2& axis) const;
@@ -203,6 +185,13 @@ public:
     ////////////////////////////////////////////////////////////
     T x; //!< X coordinate of the vector
     T y; //!< Y coordinate of the vector
+
+
+    ////////////////////////////////////////////////////////////
+    // Static member data
+    ////////////////////////////////////////////////////////////
+    static const Vector2 UnitX; //!< The X unit vector (1, 0), usually facing right
+    static const Vector2 UnitY; //!< The Y unit vector (0, 1), usually facing down
 };
 
 // Define the most common types

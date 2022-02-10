@@ -306,3 +306,18 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+
+////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+
+// Note: the 'inline' keyword here is technically not required, but VS2019 fails
+// to compile with a bogus "multiple definition" error if not explicitly used.
+template <typename T>
+inline constexpr Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
+
+// Note: the 'inline' keyword here is technically not required, but VS2019 fails
+// to compile with a bogus "multiple definition" error if not explicitly used.
+template <typename T>
+inline constexpr Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
