@@ -75,7 +75,7 @@ public:
     constexpr explicit Vector2(const Vector2<U>& vector);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Length of the vector <i>(floating point only)</i>.
+    /// \brief Length of the vector <i><b>(floating-point)</b></i>.
     ///
     /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
     ///
@@ -83,7 +83,7 @@ public:
     T length() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Square of vector's length <i>(floating point only)</i>.
+    /// \brief Square of vector's length <i><b>(floating-point)</b></i>.
     /// 
     /// Suitable for comparisons, more efficient than length().
     ///
@@ -91,7 +91,7 @@ public:
     T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Vector with same direction but length 1 <i>(floating point only)</i>.
+    /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
     /// 
     /// \pre \c vector is no zero vector.
     ///
@@ -99,7 +99,7 @@ public:
     Vector2 normalized() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Signed angle from \c *this to \c rhs <i>(floating point only)</i>.
+    /// \brief Signed angle from \c *this to \c rhs <i><b>(floating-point)</b></i>.
     /// 
     /// \return Angle in degrees in the interval [-180,180].
     /// The angle determines how much you have to rotate \c *this
@@ -110,7 +110,7 @@ public:
     Angle signedAngleTo(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Angle from +X or (1,0) vector <i>(floating point only)</i>.
+    /// \brief Angle from +X or (1,0) vector <i><b>(floating-point)</b></i>.
     /// 
     /// The vector (1,0) corresponds to 0 degrees, (0,1) corresponds to 90 degrees.
     /// 
@@ -121,7 +121,7 @@ public:
     Angle polarAngle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Rotate by given angle <i>(floating point only)</i>.
+    /// \brief Rotate by given angle <i><b>(floating-point)</b></i>.
     /// 
     /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
     ///
@@ -129,16 +129,7 @@ public:
     Vector2 rotatedBy(Angle angle) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns a perpendicular vector <i>(floating point only)</i>.
-    /// 
-    /// Returns \c vector rotated by 90 degrees counter clockwise; (x,y) becomes (-y,x).
-    /// For example, the vector (1,0) is transformed to (0,1).
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2 perpendicular() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Projection of \c vector onto \c axis <i>(floating point only)</i>.
+    /// \brief Projection of \c vector onto \c axis <i><b>(floating-point)</b></i>.
     /// 
     /// \param vector Vector to project.
     /// \param axis Vector being projected onto. Need not be normalized, but must not have length zero.
@@ -147,37 +138,46 @@ public:
     Vector2 projectedOnto(const Vector2& axis) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Computes the dot product of two 2D vectors <i>(floating point only)</i>.
+    /// \brief Returns a perpendicular vector.
+    /// 
+    /// Returns \c vector rotated by 90 degrees counter clockwise; (x,y) becomes (-y,x).
+    /// For example, the vector (1,0) is transformed to (0,1).
     ///
     ////////////////////////////////////////////////////////////
-    T dot(const Vector2& rhs) const;
+    constexpr Vector2 perpendicular() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Cross product's Z component <i>(floating point only)</i>.
+    /// \brief Dot product of two 2D vectors.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T dot(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Z component of the cross product of two 2D vectors.
     /// 
     /// Treats the operands as 3D vectors, computes their cross product and returns the result's Z component
     ///  (X and Y components are always zero).
     ///
     ////////////////////////////////////////////////////////////
-    T cross(const Vector2& rhs) const;
+    constexpr T cross(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise multiplication of \c *this and \c rhs <i>(floating point only)</i>.
+    /// \brief Component-wise multiplication of \c *this and \c rhs.
     /// 
     /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y)</tt>. Main use case are scales.
     ///
     ////////////////////////////////////////////////////////////
-    Vector2 cwiseMul(const Vector2& rhs) const;
+    constexpr Vector2 cwiseMul(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise quotient of \c *this and \c rhs <i>(floating point only)</i>.
+    /// \brief Component-wise quotient of \c *this and \c rhs.
     /// 
     /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y)</tt>. Main use case are scales.
     /// 
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    Vector2 cwiseDiv(const Vector2& rhs) const;
+    constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
 
 
     ////////////////////////////////////////////////////////////
@@ -397,9 +397,15 @@ template <typename T>
 /// \li sf::Vector2<int> is sf::Vector2i
 /// \li sf::Vector2<unsigned int> is sf::Vector2u
 ///
-/// The sf::Vector2 class has a small and simple interface, its x and y members
-/// can be accessed directly (there are no accessors like setX(), getX()) and it
-/// contains no mathematical function like dot product, cross product, length, etc.
+/// The sf::Vector2 class has a simple interface, its x and y members
+/// can be accessed directly (there are no accessors like setX(), getX()).
+///
+/// The API provides geometric operations, such as dot/cross products,
+/// length and angle computations, projections, rotations, etc.
+/// Most of these operations are limited to vectors where T is a floating
+/// point type (e.g. sf::Vector2f for T=float). The method documentation
+/// mentions "(floating-point)" in those cases.
+/// 
 ///
 /// Usage example:
 /// \code

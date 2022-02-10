@@ -57,9 +57,11 @@ y(static_cast<T>(vector.y))
 template <typename T>
 T Vector2<T>::length() const
 {
+    static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");
+
     using std::sqrt; // allow ADL
 
-	return sqrt(lengthSq());
+    return sqrt(lengthSq());
 }
 
 
@@ -67,17 +69,9 @@ T Vector2<T>::length() const
 template <typename T>
 T Vector2<T>::lengthSq() const
 {
-	return this->dot(*this);
-}
+    static_assert(std::is_floating_point_v<T>, "Vector2::lengthSq() is only supported for floating point types");
 
-
-////////////////////////////////////////////////////////////
-template <typename T>
-Vector2<T> Vector2<T>::withLength(T newLength) const
-{
-	assert(*this != Vector2<T>());
-
-	return (*this) * newLength / length();
+    return this->dot(*this);
 }
 
 
@@ -85,8 +79,10 @@ Vector2<T> Vector2<T>::withLength(T newLength) const
 template <typename T>
 Vector2<T> Vector2<T>::normalized() const
 {
-	assert(*this != Vector2<T>());
-	return (*this) / length();
+    static_assert(std::is_floating_point_v<T>, "Vector2::normalized() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    return (*this) / length();
 }
 
 
@@ -94,11 +90,13 @@ Vector2<T> Vector2<T>::normalized() const
 template <typename T>
 Angle Vector2<T>::signedAngleTo(const Vector2<T>& rhs) const
 {
+    static_assert(std::is_floating_point_v<T>, "Vector2::signedAngleTo() is only supported for floating point types");
+
     using std::atan2; // allow ADL
 
-	assert(*this != Vector2<T>());
+    assert(*this != Vector2<T>());
     assert(rhs != Vector2<T>());
-	return radians(atan2(lhs.cross(rhs), lhs.dot(rhs)));
+    return radians(atan2(this->cross(rhs), this->dot(rhs)));
 }
 
 
@@ -106,27 +104,12 @@ Angle Vector2<T>::signedAngleTo(const Vector2<T>& rhs) const
 template <typename T>
 Angle Vector2<T>::polarAngle() const
 {
+    static_assert(std::is_floating_point_v<T>, "Vector2::polarAngle() is only supported for floating point types");
+
     using std::atan2; // allow ADL
 
-	assert(*this != Vector2<T>());
-	return radians(atan2(vector.y, vector.x));
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-Vector2<T> Vector2<T>::withPolarAngle(Angle newAngle) const
-{
-	// No assert here, because turning a zero vector is well-defined (yields always zero vector)
-    
-    using std::sin; // allow ADL
-    using std::cos;
-
-	T vecLength = length(vector);
-
-    return Vector2<T>(
-	    vecLength * cos(newAngle.asRadians()),
-	    vecLength * sin(newAngle.asRadians()));
+    assert(*this != Vector2<T>());
+    return radians(atan2(y, x));
 }
 
 
@@ -134,27 +117,19 @@ Vector2<T> Vector2<T>::withPolarAngle(Angle newAngle) const
 template <typename T>
 Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
 {
-	// No assert here, because rotating a zero vector is well-defined (yields always zero vector)
+    static_assert(std::is_floating_point_v<T>, "Vector2::rotatedBy() is only supported for floating point types");
         
     using std::sin; // allow ADL
     using std::cos;
 
-	T c = cos(angle.asRadians());
-	T s = sin(angle.asRadians());
+    // No zero vector assert, because rotating a zero vector is well-defined (yields always itself)
+    T c = cos(angle.asRadians());
+    T s = sin(angle.asRadians());
 
-	// Don'T manipulate x and y separately, otherwise they're overwritten too early
-	return Vector2<T>(
-		c * vector.x - s * vector.y,
-		s * vector.x + c * vector.y);
-}
-
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-Vector2<T> Vector2<T>::perpendicular() const
-{
-	return Vector2<T>(-vector.y, vector.x);
+    // Don't manipulate x and y separately, otherwise they're overwritten too early
+    return Vector2<T>(
+        c * x - s * y,
+        s * x + c * y);
 }
 
 
@@ -162,41 +137,51 @@ Vector2<T> Vector2<T>::perpendicular() const
 template <typename T>
 Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
 {
-	assert(axis != Vector2<T>());
-	return this->dot(axis) / axis.lengthSq() * axis;
+    static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
+
+    assert(axis != Vector2<T>());
+    return this->dot(axis) / axis.lengthSq() * axis;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-T Vector2<T>::dot(const Vector2<T>& rhs) const
+constexpr Vector2<T> Vector2<T>::perpendicular() const
 {
-	return x * rhs.x + y * rhs.y;
+    return Vector2<T>(-y, x);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-T Vector2<T>::cross(const Vector2<T>& rhs) const
+constexpr T Vector2<T>::dot(const Vector2<T>& rhs) const
 {
-	return x * rhs.y - y * rhs.x;
+    return x * rhs.x + y * rhs.y;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
+constexpr T Vector2<T>::cross(const Vector2<T>& rhs) const
 {
-	return Vector2<T>(x * rhs.x, y * rhs.y);
+    return x * rhs.y - y * rhs.x;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
+constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
 {
-	assert(rhs.x != 0 && rhs.y != 0);
-	return Vector2<T>(x / rhs.x, y / rhs.y);
+    return Vector2<T>(x * rhs.x, y * rhs.y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
+{
+    assert(rhs.x != 0 && rhs.y != 0);
+    return Vector2<T>(x / rhs.x, y / rhs.y);
 }
 
 
