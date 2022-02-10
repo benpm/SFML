@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -50,6 +50,153 @@ constexpr Vector2<T>::Vector2(const Vector2<U>& vector) :
 x(static_cast<T>(vector.x)),
 y(static_cast<T>(vector.y))
 {
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T Vector2<T>::length() const
+{
+    using std::sqrt; // allow ADL
+
+	return sqrt(lengthSq());
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T Vector2<T>::lengthSq() const
+{
+	return this->dot(*this);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::withLength(T newLength) const
+{
+	assert(*this != Vector2<T>());
+
+	return (*this) * newLength / length();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::normalized() const
+{
+	assert(*this != Vector2<T>());
+	return (*this) / length();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::signedAngleTo(const Vector2<T>& rhs) const
+{
+    using std::atan2; // allow ADL
+
+	assert(*this != Vector2<T>());
+    assert(rhs != Vector2<T>());
+	return radians(atan2(lhs.cross(rhs), lhs.dot(rhs)));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::polarAngle() const
+{
+    using std::atan2; // allow ADL
+
+	assert(*this != Vector2<T>());
+	return radians(atan2(vector.y, vector.x));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::withPolarAngle(Angle newAngle) const
+{
+	// No assert here, because turning a zero vector is well-defined (yields always zero vector)
+    
+    using std::sin; // allow ADL
+    using std::cos;
+
+	T vecLength = length(vector);
+
+    return Vector2<T>(
+	    vecLength * cos(newAngle.asRadians()),
+	    vecLength * sin(newAngle.asRadians()));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
+{
+	// No assert here, because rotating a zero vector is well-defined (yields always zero vector)
+        
+    using std::sin; // allow ADL
+    using std::cos;
+
+	T c = cos(angle.asRadians());
+	T s = sin(angle.asRadians());
+
+	// Don'T manipulate x and y separately, otherwise they're overwritten too early
+	return Vector2<T>(
+		c * vector.x - s * vector.y,
+		s * vector.x + c * vector.y);
+}
+
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::perpendicular() const
+{
+	return Vector2<T>(-vector.y, vector.x);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
+{
+	assert(axis != Vector2<T>());
+	return this->dot(axis) / axis.lengthSq() * axis;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T Vector2<T>::dot(const Vector2<T>& rhs) const
+{
+	return x * rhs.x + y * rhs.y;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T Vector2<T>::cross(const Vector2<T>& rhs) const
+{
+	return x * rhs.y - y * rhs.x;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
+{
+	return Vector2<T>(x * rhs.x, y * rhs.y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
+{
+	assert(rhs.x != 0 && rhs.y != 0);
+	return Vector2<T>(x / rhs.x, y / rhs.y);
 }
 
 

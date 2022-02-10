@@ -26,6 +26,9 @@
 #define SFML_VECTOR2_HPP
 
 #include <SFML/System/Angle.hpp>
+#include <cassert>
+#include <cmath>
+#include <type_traits>
 
 
 namespace sf
@@ -70,6 +73,130 @@ public:
     ////////////////////////////////////////////////////////////
     template <typename U>
     constexpr explicit Vector2(const Vector2<U>& vector);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Length of the vector <i>(floating point only)</i>.
+    ///
+    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
+    ///
+    ////////////////////////////////////////////////////////////
+    T length() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Square of vector's length <i>(floating point only)</i>.
+    /// 
+    /// Suitable for comparisons, more efficient than length().
+    ///
+    ////////////////////////////////////////////////////////////
+    T lengthSq() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Scales \c *this to have length <tt>|newLength|</tt> <i>(floating point only)</i>.
+    /// 
+    /// If \c newLength is less than zero, the vector's direction changes.
+    /// 
+    /// \pre \c vector is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 withLength(T newLength) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Vector with same direction but length 1 <i>(floating point only)</i>.
+    /// 
+    /// \pre \c vector is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 normalized() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Signed angle from \c *this to \c rhs <i>(floating point only)</i>.
+    /// 
+    /// \return Angle in degrees in the interval [-180,180].
+    /// The angle determines how much you have to rotate \c *this
+    ///  until it points to the same direction as \c rhs.
+    /// \pre Neither \c *this nor \c rhs is a zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Angle signedAngleTo(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Angle from +X or (1,0) vector <i>(floating point only)</i>.
+    /// 
+    /// The vector (1,0) corresponds to 0 degrees, (0,1) corresponds to 90 degrees.
+    /// 
+    /// \return Angle in degrees in the interval [-180,180].
+    /// \pre \c vector is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Angle polarAngle() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns a vector with same length, but given polar angle <i>(floating point only)</i>.
+    /// 
+    /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 withPolarAngle(Angle newAngle) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Rotate by given angle <i>(floating point only)</i>.
+    /// 
+    /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 rotatedBy(Angle angle) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns a perpendicular vector <i>(floating point only)</i>.
+    /// 
+    /// Returns \c vector rotated by 90 degrees counter clockwise; (x,y) becomes (-y,x).
+    /// For example, the vector (1,0) is transformed to (0,1).
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 perpendicular() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Projection of \c vector onto \c axis <i>(floating point only)</i>.
+    /// 
+    /// \param vector Vector to project.
+    /// \param axis Vector being projected onto. Need not be a unit vector, but must not have length zero.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 projectedOnto(const Vector2& axis) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Computes the dot product of two 2D vectors <i>(floating point only)</i>.
+    ///
+    ////////////////////////////////////////////////////////////
+    T dot(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Cross product's Z component <i>(floating point only)</i>.
+    /// 
+    /// Treats the operands as 3D vectors, computes their cross product and returns the result's Z component
+    ///  (X and Y components are always zero).
+    ///
+    ////////////////////////////////////////////////////////////
+    T cross(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise multiplication of \c *this and \c rhs <i>(floating point only)</i>.
+    /// 
+    /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y)</tt>. Main use case are scales.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 cwiseMul(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise quotient of \c *this and \c rhs <i>(floating point only)</i>.
+    /// 
+    /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y)</tt>. Main use case are scales.
+    /// 
+    /// \pre Neither component of \c rhs is zero.
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2 cwiseDiv(const Vector2& rhs) const;
+
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -100,12 +227,12 @@ template <typename T>
 /// \brief Overload of binary operator +=
 ///
 /// This operator performs a memberwise addition of both vectors,
-/// and assigns the result to \a left.
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -116,12 +243,12 @@ constexpr Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 /// \brief Overload of binary operator -=
 ///
 /// This operator performs a memberwise subtraction of both vectors,
-/// and assigns the result to \a left.
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -160,7 +287,7 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise multiplication by \a right
+/// \return Memberwise multiplication by \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -173,7 +300,7 @@ template <typename T>
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise multiplication by \a left
+/// \return Memberwise multiplication by \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -183,13 +310,13 @@ template <typename T>
 /// \relates Vector2
 /// \brief Overload of binary operator *=
 ///
-/// This operator performs a memberwise multiplication by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a memberwise multiplication by \c right,
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -202,7 +329,7 @@ constexpr Vector2<T>& operator *=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise division by \a right
+/// \return Memberwise division by \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -212,13 +339,13 @@ template <typename T>
 /// \relates Vector2
 /// \brief Overload of binary operator /=
 ///
-/// This operator performs a memberwise division by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a memberwise division by \c right,
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -233,7 +360,7 @@ constexpr Vector2<T>& operator /=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is equal to \a right
+/// \return True if \c left is equal to \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -248,156 +375,11 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is not equal to \a right
+/// \return True if \c left is not equal to \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the length of the 2D vector.
-///
-/// If you are not interested in the actual length, but only in comparisons, consider using lengthSquared().
-///
-////////////////////////////////////////////////////////////
-float length(const Vector2f& vector);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the square of \a vector's length.
-/// 
-/// Suitable for comparisons, more efficient than length().
-///
-////////////////////////////////////////////////////////////
-float lengthSquared(const Vector2f& vector);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Adapts \a vector so that its length is |\a newLength| after this operation.
-/// 
-/// If \a newLength is less than zero, the vector's direction changes.
-/// 
-/// \pre \a vector is no zero vector.
-///
-////////////////////////////////////////////////////////////
-void setLength(Vector2f& vector, float newLength);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns a vector with same direction as the argument, but with length 1.
-/// 
-/// \pre \a vector is no zero vector.
-///
-////////////////////////////////////////////////////////////
-Vector2f normalized(const Vector2f& vector);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Computes the signed angle from \a lhs to \a rhs.
-/// 
-/// \return Angle in degrees in the interval [-180,180]. The angle determines how much you have to turn \a lhs
-///  until it points to the same direction as \a rhs.
-/// \pre Neither \a lhs nor \a rhs is a zero vector.
-///
-////////////////////////////////////////////////////////////
-Angle signedAngle(const Vector2f& lhs, const Vector2f& rhs);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the polar angle.
-/// 
-/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
-/// 
-/// \return Angle in degrees in the interval [-180,180].
-/// \pre \a vector is no zero vector.
-///
-////////////////////////////////////////////////////////////
-Angle polarAngle(const Vector2f& vector);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Sets the polar angle of the specified vector.
-/// 
-/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
-///
-////////////////////////////////////////////////////////////
-void setPolarAngle(Vector2f& vector, Angle newAngle);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Rotates the vector by the given angle (in degrees).
-/// 
-/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
-///
-////////////////////////////////////////////////////////////
-void rotate(Vector2f& vector, Angle angle);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns a copy of the vector, rotated by \a angle degrees.
-/// 
-/// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
-///
-////////////////////////////////////////////////////////////
-Vector2f rotatedVector(const Vector2f& vector, Angle angle);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns a perpendicular vector.
-/// 
-/// Returns \a vector turned by 90 degrees counter clockwise; (x,y) becomes (-y,x).
-/// For example, the vector (1,0) is transformed to (0,1).
-///
-////////////////////////////////////////////////////////////
-Vector2f perpendicularVector(const Vector2f& vector);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Computes the dot product of two 2D vectors.
-///
-////////////////////////////////////////////////////////////
-float dot(const Vector2f& lhs, const Vector2f& rhs);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Computes the cross product of two 2D vectors (Z component only).
-/// 
-/// Treats the operands as 3D vectors, computes their cross product and returns the result's Z component
-///  (X and Y components are always zero).
-///
-////////////////////////////////////////////////////////////
-float cross(const Vector2f& lhs, const Vector2f& rhs);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the component-wise product of \a lhs and \a rhs.
-/// 
-/// Computes <i>(lhs.x*rhs.x, lhs.y*rhs.y)</i>. Component-wise multiplications are mainly used for scales.
-///
-////////////////////////////////////////////////////////////
-Vector2f cwiseProduct(const Vector2f& lhs, const Vector2f& rhs);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the component-wise quotient of \a lhs and \a rhs.
-/// 
-/// Computes <i>(lhs.x/rhs.x, lhs.y/rhs.y)</i>. Component-wise divisions are mainly used for scales.
-/// 
-/// \pre Neither component of \a rhs is zero.
-///
-////////////////////////////////////////////////////////////
-Vector2f cwiseQuotient(const Vector2f& lhs, const Vector2f& rhs);
-
-////////////////////////////////////////////////////////////
-/// \relates Vector2
-/// \brief Returns the projection of \a vector onto \a axis.
-/// 
-/// \param vector Vector to project onto another.
-/// \param axis Vector being projected onto. Need not be a unit vector, but may not have length zero.
-///
-////////////////////////////////////////////////////////////
-Vector2f projectedVector(const Vector2f& vector, const Vector2f& axis);
 
 #include <SFML/System/Vector2.inl>
 
