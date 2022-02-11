@@ -59,15 +59,13 @@ T Vector2<T>::length() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");
 
-    using std::sqrt; // allow ADL
-
-    return sqrt(lengthSq());
+    return std::hypot(x, y);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-T Vector2<T>::lengthSq() const
+constexpr T Vector2<T>::lengthSq() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::lengthSq() is only supported for floating point types");
 
@@ -92,11 +90,9 @@ Angle Vector2<T>::signedAngleTo(const Vector2<T>& rhs) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::signedAngleTo() is only supported for floating point types");
 
-    using std::atan2; // allow ADL
-
     assert(*this != Vector2<T>());
     assert(rhs != Vector2<T>());
-    return radians(atan2(this->cross(rhs), this->dot(rhs)));
+    return radians(std::atan2(this->cross(rhs), this->dot(rhs)));
 }
 
 
@@ -106,10 +102,9 @@ Angle Vector2<T>::polarAngle() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::polarAngle() is only supported for floating point types");
 
-    using std::atan2; // allow ADL
 
     assert(*this != Vector2<T>());
-    return radians(atan2(y, x));
+    return radians(std::atan2(y, x));
 }
 
 
@@ -118,24 +113,21 @@ template <typename T>
 Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::rotatedBy() is only supported for floating point types");
-        
-    using std::sin; // allow ADL
-    using std::cos;
-
+   
     // No zero vector assert, because rotating a zero vector is well-defined (yields always itself)
-    T c = cos(angle.asRadians());
-    T s = sin(angle.asRadians());
+    T cos = std::cos(angle.asRadians());
+    T sin = std::sin(angle.asRadians());
 
     // Don't manipulate x and y separately, otherwise they're overwritten too early
     return Vector2<T>(
-        c * x - s * y,
-        s * x + c * y);
+        cos * x - sin * y,
+        sin * x + cos * y);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
+constexpr Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
 
@@ -180,7 +172,8 @@ constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
 template <typename T>
 constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
 {
-    assert(rhs.x != 0 && rhs.y != 0);
+    assert(rhs.x != 0);
+    assert(rhs.y != 0);
     return Vector2<T>(x / rhs.x, y / rhs.y);
 }
 
@@ -297,12 +290,8 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 // Static member data
 ////////////////////////////////////////////////////////////
 
-// Note: the 'inline' keyword here is technically not required, but VS2019 fails
-// to compile with a bogus "multiple definition" error if not explicitly used.
 template <typename T>
-inline constexpr Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
+constexpr Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
 
-// Note: the 'inline' keyword here is technically not required, but VS2019 fails
-// to compile with a bogus "multiple definition" error if not explicitly used.
 template <typename T>
-inline constexpr Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
+constexpr Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));

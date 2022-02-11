@@ -88,22 +88,22 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    T lengthSq() const;
+    constexpr T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
     /// 
-    /// \pre \c vector is no zero vector.
+    /// \pre \c *this is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    Vector2 normalized() const;
+    [[nodiscard]] Vector2 normalized() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Signed angle from \c *this to \c rhs <i><b>(floating-point)</b></i>.
     /// 
     /// \return Angle in degrees in the interval [-180,180].
     /// The angle determines how much you have to rotate \c *this
-    ///  until it points to the same direction as \c rhs.
+    ///  in either direction, until it is parallel to \c rhs.
     /// \pre Neither \c *this nor \c rhs is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
@@ -115,33 +115,39 @@ public:
     /// The vector (1,0) corresponds to 0 degrees, (0,1) corresponds to 90 degrees.
     /// 
     /// \return Angle in degrees in the interval [-180,180].
-    /// \pre \c vector is no zero vector.
+    /// \pre This vector is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
     Angle polarAngle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Rotate by given angle <i><b>(floating-point)</b></i>.
+    /// \brief Rotate by angle \c phi <i><b>(floating-point)</b></i>.
     /// 
-    /// The vector (1,0) corresponds 0 degrees, (0,1) corresponds 90 degrees.
+    /// Returns a vector with same length but different direction.
     ///
+    /// In SFML's default coordinate system with +X right and +Y down,
+    /// this amounts to a clockwise rotation by \c phi.
+    /// 
     ////////////////////////////////////////////////////////////
-    Vector2 rotatedBy(Angle angle) const;
+    [[nodiscard]] Vector2 rotatedBy(Angle phi) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Projection of \c vector onto \c axis <i><b>(floating-point)</b></i>.
+    /// \brief Projection of this vector onto \c axis <i><b>(floating-point)</b></i>.
     /// 
-    /// \param vector Vector to project.
-    /// \param axis Vector being projected onto. Need not be normalized, but must not have length zero.
+    /// \param axis Vector being projected onto. Need not be normalized.
+    /// \pre \c axis must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
-    Vector2 projectedOnto(const Vector2& axis) const;
+    [[nodiscard]] constexpr Vector2 projectedOnto(const Vector2& axis) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns a perpendicular vector.
     /// 
-    /// Returns \c vector rotated by 90 degrees counter clockwise; (x,y) becomes (-y,x).
+    /// Returns \c *this rotated by +90 degrees; (x,y) becomes (-y,x).
     /// For example, the vector (1,0) is transformed to (0,1).
+    ///
+    /// In SFML's default coordinate system with +X right and +Y down,
+    /// this amounts to a clockwise rotation.
     ///
     ////////////////////////////////////////////////////////////
     constexpr Vector2 perpendicular() const;
@@ -155,8 +161,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Z component of the cross product of two 2D vectors.
     /// 
-    /// Treats the operands as 3D vectors, computes their cross product and returns the result's Z component
-    ///  (X and Y components are always zero).
+    /// Treats the operands as 3D vectors, computes their cross product
+    /// and returns the result's Z component (X and Y components are always zero).
     ///
     ////////////////////////////////////////////////////////////
     constexpr T cross(const Vector2& rhs) const;
@@ -170,7 +176,7 @@ public:
     constexpr Vector2 cwiseMul(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise quotient of \c *this and \c rhs.
+    /// \brief Component-wise division of \c *this and \c rhs.
     /// 
     /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y)</tt>. Main use case are scales.
     /// 
@@ -402,9 +408,10 @@ template <typename T>
 ///
 /// The API provides geometric operations, such as dot/cross products,
 /// length and angle computations, projections, rotations, etc.
-/// Most of these operations are limited to vectors where T is a floating
-/// point type (e.g. sf::Vector2f for T=float). The method documentation
-/// mentions "(floating-point)" in those cases.
+/// Many of these operations are only meaningful for vectors where T is
+/// a floating point type (e.g. sf::Vector2f for T=float), often because
+/// results cannot be represented accurately with integers.
+/// The method documentation mentions "(floating-point)" in those cases.
 /// 
 ///
 /// Usage example:
