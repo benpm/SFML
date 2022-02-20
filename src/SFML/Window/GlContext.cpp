@@ -41,6 +41,7 @@
 #include <cstring>
 #include <cctype>
 #include <cassert>
+#include <memory>
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -167,13 +168,13 @@ namespace
         ////////////////////////////////////////////////////////////
         TransientContext() :
         referenceCount   (0),
-        context          (0),
+        context          (),
         sharedContextLock(0),
         useSharedContext (false)
         {
             if (resourceCount == 0)
             {
-                context = new sf::Context;
+                context = std::make_unique<sf::Context>();
             }
             else if (!currentContext)
             {
@@ -193,14 +194,13 @@ namespace
                 sharedContext->setActive(false);
 
             delete sharedContextLock;
-            delete context;
         }
 
         ///////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
         unsigned int referenceCount;
-        sf::Context* context;
+        std::unique_ptr<sf::Context> context;
         sf::Lock*    sharedContextLock;
         bool         useSharedContext;
     };
