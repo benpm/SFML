@@ -207,7 +207,7 @@ namespace
 
     // This per-thread variable tracks if and how a transient
     // context is currently being used on the current thread
-    sf::ThreadLocalPtr<TransientContext> transientContext(NULL);
+    thread_local std::unique_ptr<TransientContext> transientContext;
 
     // Supported OpenGL extensions
     std::vector<std::string> extensions;
@@ -352,7 +352,7 @@ void GlContext::acquireTransientContext()
     // If this is the first TransientContextLock on this thread
     // construct the state object
     if (!transientContext)
-        transientContext = new TransientContext;
+        transientContext = std::make_unique<TransientContext>();
 
     // Increase the reference count
     transientContext->referenceCount++;
@@ -375,8 +375,7 @@ void GlContext::releaseTransientContext()
     // destroy the state object
     if (transientContext->referenceCount == 0)
     {
-        delete transientContext;
-        transientContext = NULL;
+        transientContext.reset();
     }
 }
 
