@@ -623,6 +623,8 @@ void GlContext::cleanupUnsharedResources()
     for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter) {
         if (iter->first && iter->second) {
             iter->first(iter->second);
+        } else {
+            break;
         }
     }
 
