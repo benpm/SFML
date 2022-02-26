@@ -620,8 +620,11 @@ void GlContext::cleanupUnsharedResources()
     setActive(true);
 
     // Call the registered destruction callbacks
-    for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter)
-        iter->first(iter->second);
+    for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter) {
+        if (iter->first && iter->second) {
+            iter->first(iter->second);
+        }
+    }
 
     // Make the originally active context active again
     if (contextToRestore)
